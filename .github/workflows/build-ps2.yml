@@ -1,5 +1,6 @@
 name: Build OpenBLOX PS2
 
+
 on:
   workflow_dispatch:
 
@@ -10,14 +11,17 @@ jobs:
     steps:
       - name: Instalar Dependencias
         run: |
-          apk update && apk add make
+          apk update && apk add make findutils
 
       - name: Baixar Codigo
         uses: actions/checkout@v3
 
-      - name: Compilar ELF
+      - name: Debug e Compilar
         run: |
-          # Define as variáveis de ambiente necessárias para o PS2DEV
+          echo "--- Procurando o compilador ee-gcc ---"
+          find / -name "ee-gcc" 2>/dev/null || echo "Não encontrado na raiz"
+          
+          # Tentativa de rodar o make
           export PS2DEV=/usr/local/ps2dev
           export PS2SDK=$PS2DEV/ps2sdk
           export PATH=$PATH:$PS2DEV/bin:$PS2SDK/bin:$PS2SDK/ee/bin
