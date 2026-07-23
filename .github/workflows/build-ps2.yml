@@ -16,10 +16,8 @@ jobs:
           cd C_Engine
           make ps2
 
-            - name: Enviar ELF Gerado
+      - name: Enviar ELF Gerado
         uses: actions/upload-artifact@v4
         with:
           name: openblox_ps2_elf
           path: C_Engine/*.elf
-          
-          
