@@ -1,6 +1,34 @@
 .PHONY: all ds ds-clean pc pc-clean wii wii-clean ps2 ps2-clean
 
-all: ds ds-clean pc pc-clean wii wii-clean
+CC ?= ee-gcc
+
+PS2DEV ?= /usr/local/ps2dev
+PS2SDK ?= $(PS2DEV)/ps2sdk
+
+CFLAGS = -O2 \
+-I$(PS2SDK)/ee/include \
+-I$(PS2DEV)/gsKit/include
+
+LDFLAGS = \
+-L$(PS2SDK)/ee/lib \
+-L$(PS2DEV)/gsKit/lib \
+-lps2sdl \
+-lgl \
+-lmath3d \
+-lpacket \
+-ldma \
+-lgraph \
+-ldraw \
+-lpad \
+-lkernel
+
+SOURCES = $(wildcard *.c)
+OBJECTS = $(SOURCES:.c=.o)
+
+all:
+	$(MAKE) ds
+	$(MAKE) pc
+	$(MAKE) wii
 
 ds:
 	$(MAKE) -C ./Makefiles -f makefile_ds
@@ -20,8 +48,11 @@ wii:
 wii-clean:
 	$(MAKE) -C ./Makefiles -f makefile_rvl clean
 
-ps2:
-	ee-gcc -O2 -I$(PS2SDK)/ee/include -I$(PS2DEV)/gsKit/include main.c -o openblox_ps2.elf -L$(PS2SDK)/ee/lib -L$(PS2DEV)/gsKit/lib -lps2sdl -lgl -lmath3d -lpacket -ldma -lgraph -ldraw -lpad -lkernel
+ps2: $(OBJECTS)
+	$(CC) $(OBJECTS) -o openblox_ps2.elf $(LDFLAGS)
+
+%.o: %.c
+	$(CC) $(CFLAGS) -c $< -o $@
 
 ps2-clean:
-	rm -f openblox_ps2.elf *.o
+	rm -f *.o openblox_ps2.elf
