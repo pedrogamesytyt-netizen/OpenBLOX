@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Instalar Dependencias
         run: |
-          apt-get update && apt-get install -y make
+          apk update && apk add make
 
       - name: Baixar Codigo
         uses: actions/checkout@v3
