@@ -6,39 +6,22 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ps2dev/ps2dev:latest
 
     steps:
-      - name: Baixar Código
+      - name: Baixar código
         uses: actions/checkout@v4
 
-      - name: Verificar Ambiente
+      - name: Baixar ps2toolchain-ee
         run: |
-          echo "=== PATH ==="
-          echo $PATH
+          git clone https://github.com/ps2dev/ps2toolchain-ee.git
 
-          echo "=== Procurando ee-gcc ==="
-          which ee-gcc || true
-          find / -name ee-gcc 2>/dev/null || true
-
-          echo "=== Variáveis ==="
-          export PS2DEV=/usr/local/ps2dev
-          export PS2SDK=$PS2DEV/ps2sdk
-          echo $PS2DEV
-          echo $PS2SDK
+      - name: Instalar toolchain
+        run: |
+          cd ps2toolchain-ee
+          chmod +x toolchain.sh
+          ./toolchain.sh
 
       - name: Compilar
         run: |
-          export PS2DEV=/usr/local/ps2dev
-          export PS2SDK=$PS2DEV/ps2sdk
-          export PATH=$PATH:$PS2DEV/bin
-
           cd C_Engine
           make ps2
-
-      - name: Enviar ELF
-        uses: actions/upload-artifact@v4
-        with:
-          name: OpenBLOX_PS2
-          path: C_Engine/openblox_ps2.elf
