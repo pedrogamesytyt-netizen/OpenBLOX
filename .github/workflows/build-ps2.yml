@@ -7,32 +7,27 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ps2dev/ps2dev:latest
     steps:
-      - name: Instalar Dependencias
-        run: |
-          apk update && apk add make findutils
-
       - name: Baixar Codigo
         uses: actions/checkout@v3
 
+      - name: Instalar Compilador PS2
+        run: |
+          # Adiciona o repositório necessário e instala as ferramentas de compilação
+          sudo apt-get update
+          sudo apt-get install -y make git gcc-mipsel-linux-gnu binutils-mipsel-linux-gnu
+          
+          # Nota: O projeto OpenBLOX pode exigir dependências extras do PS2SDK
+          # Esta é uma estrutura básica para compilação.
+
       - name: Compilar ELF
         run: |
-          # Define os caminhos onde o compilador geralmente fica
-          export PS2DEV=/usr/local/ps2dev
-          export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/ps2sdk/ee/bin
-          
-          echo "Verificando se o compilador existe em /usr/local/ps2dev/ee/bin/ee-gcc"
-          ls -l /usr/local/ps2dev/ee/bin/ee-gcc || echo "Arquivo não encontrado lá"
-
           cd C_Engine
-          # Força o Makefile a usar o caminho correto
-          make ps2 CC=/usr/local/ps2dev/ee/bin/ee-gcc
+          make ps2
 
       - name: Enviar ELF Gerado
         uses: actions/upload-artifact@v4
         with:
           name: openblox_ps2_elf
           path: C_Engine/*.elf
-          
           
