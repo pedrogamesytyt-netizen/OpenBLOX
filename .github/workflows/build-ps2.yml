@@ -17,6 +17,7 @@ jobs:
 
       - name: Compilar ELF
         run: |
+          export PATH=$PATH:/usr/local/ps2dev/bin
           cd C_Engine
           make ps2
 
@@ -25,4 +26,3 @@ jobs:
         with:
           name: openblox_ps2_elf
           path: C_Engine/*.elf
-          
