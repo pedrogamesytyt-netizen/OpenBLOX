@@ -14,14 +14,14 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-
-      - name: Build inside PS2 Docker
-        run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/project" \
-            -w /project/C_Engine \
-            ps2dev/ps2dev:latest \
-            make ps2
+        
+        - name: Build inside PS2 Toolchain
+  run: |
+    docker run --rm \
+      -v "${{ github.workspace }}:/project" \
+      -w /project/C_Engine \
+      ghcr.io/ps2dev/ps2toolchain:latest \
+      make ps2
 
       - name: Verificar ELF
         run: |
