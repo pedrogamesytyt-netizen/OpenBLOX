@@ -1,28 +1,44 @@
 name: Build OpenBLOX PS2
 
-
 on:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: ps2dev/ps2dev:latest
-    steps:
-      - name: Baixar Codigo
-        uses: actions/checkout@v3
+    container:
+      image: ps2dev/ps2dev:latest
 
-      - name: Compilar ELF
+    steps:
+      - name: Baixar Código
+        uses: actions/checkout@v4
+
+      - name: Verificar Ambiente
         run: |
-          # Define os caminhos essenciais para o SDK do PS2
+          echo "=== PATH ==="
+          echo $PATH
+
+          echo "=== Procurando ee-gcc ==="
+          which ee-gcc || true
+          find / -name ee-gcc 2>/dev/null || true
+
+          echo "=== Variáveis ==="
           export PS2DEV=/usr/local/ps2dev
           export PS2SDK=$PS2DEV/ps2sdk
-          
-          # Entra na pasta do motor
+          echo $PS2DEV
+          echo $PS2SDK
+
+      - name: Compilar
+        run: |
+          export PS2DEV=/usr/local/ps2dev
+          export PS2SDK=$PS2DEV/ps2sdk
+          export PATH=$PATH:$PS2DEV/bin
+
           cd C_Engine
-          
-          # Executa o make forçando o compilador (CC) e as pastas (SDK)
-          # Tenta usar o caminho padrão do ee-gcc no contêiner
-          make ps2 CC=/usr/local/ps2dev/ee/bin/ee-gcc PS2SDK=$PS2SDK
-          
-          
+          make ps2
+
+      - name: Enviar ELF
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenBLOX_PS2
+          path: C_Engine/openblox_ps2.elf
