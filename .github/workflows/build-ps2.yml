@@ -1,27 +1,34 @@
 name: Build OpenBLOX PS2
 
 on:
+  push:
+    branches: [Complete-Rework]
+  pull_request:
+    branches: [Complete-Rework]
   workflow_dispatch:
 
 jobs:
-  build:
+  build-ps2:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Baixar código
+      - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Baixar ps2toolchain
+      - name: Build inside PS2 Docker
         run: |
-          git clone https://github.com/ps2dev/ps2toolchain.git
+          docker run --rm \
+            -v "${{ github.workspace }}:/project" \
+            -w /project/C_Engine \
+            ps2dev/ps2dev:latest \
+            make ps2
 
-      - name: Instalar toolchain
+      - name: Verificar ELF
         run: |
-          cd ps2toolchain
-          chmod +x toolchain.sh
-          ./toolchain.sh
+          ls -R C_Engine || true
 
-      - name: Compilar
-        run: |
-          cd C_Engine
-          make ps2
+      - name: Upload OpenBLOX PS2
+        uses: actions/upload-artifact@v4
+        with:
+          name: OpenBLOX_PS2
+          path: C_Engine/openblox_ps2.elf
