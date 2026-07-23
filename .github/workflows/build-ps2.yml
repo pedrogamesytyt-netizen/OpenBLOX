@@ -13,7 +13,7 @@ jobs:
 
       - name: Baixar ps2toolchain-ee
         run: |
-          git clone https://github.com/ps2dev/ps2toolchain
+          git clone https://github.com/ps2dev/ps2toolchain.git
 
       - name: Instalar toolchain
         run: |
