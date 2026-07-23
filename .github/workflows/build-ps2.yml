@@ -16,22 +16,23 @@ jobs:
       - name: Baixar Codigo
         uses: actions/checkout@v3
 
-      - name: Debug e Compilar
+      - name: Compilar ELF
         run: |
-          echo "--- Procurando o compilador ee-gcc ---"
-          find / -name "ee-gcc" 2>/dev/null || echo "Não encontrado na raiz"
-          
-          # Tentativa de rodar o make
+          # Define os caminhos onde o compilador geralmente fica
           export PS2DEV=/usr/local/ps2dev
-          export PS2SDK=$PS2DEV/ps2sdk
-          export PATH=$PATH:$PS2DEV/bin:$PS2SDK/bin:$PS2SDK/ee/bin
+          export PATH=$PATH:$PS2DEV/bin:$PS2DEV/ee/bin:$PS2DEV/ps2sdk/ee/bin
           
+          echo "Verificando se o compilador existe em /usr/local/ps2dev/ee/bin/ee-gcc"
+          ls -l /usr/local/ps2dev/ee/bin/ee-gcc || echo "Arquivo não encontrado lá"
+
           cd C_Engine
-          make ps2
+          # Força o Makefile a usar o caminho correto
+          make ps2 CC=/usr/local/ps2dev/ee/bin/ee-gcc
 
       - name: Enviar ELF Gerado
         uses: actions/upload-artifact@v4
         with:
           name: openblox_ps2_elf
           path: C_Engine/*.elf
+          
           
