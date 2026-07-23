@@ -11,13 +11,13 @@ jobs:
       - name: Baixar código
         uses: actions/checkout@v4
 
-      - name: Baixar ps2toolchain-ee
+      - name: Baixar ps2toolchain
         run: |
           git clone https://github.com/ps2dev/ps2toolchain.git
 
       - name: Instalar toolchain
         run: |
-          cd ps2toolchain-ee
+          cd ps2toolchain
           chmod +x toolchain.sh
           ./toolchain.sh
 
