@@ -17,7 +17,11 @@ jobs:
 
       - name: Compilar ELF
         run: |
-          export PATH=$PATH:/usr/local/ps2dev/bin
+          # Define as variáveis de ambiente necessárias para o PS2DEV
+          export PS2DEV=/usr/local/ps2dev
+          export PS2SDK=$PS2DEV/ps2sdk
+          export PATH=$PATH:$PS2DEV/bin:$PS2SDK/bin:$PS2SDK/ee/bin
+          
           cd C_Engine
           make ps2
 
@@ -26,3 +30,4 @@ jobs:
         with:
           name: openblox_ps2_elf
           path: C_Engine/*.elf
+          
